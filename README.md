@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/logo.png?raw=true" alt="Agent-Trace Logo" width="128" />
+</p>
+
 # Agent-Trace
 
 Local-first visual timeline and debugger for AI agent trajectories. Ingests OpenTelemetry GenAI spans and LangChain runs, rendering multi-lane execution graphs with context memory diffing, loop detection, and cost accounting.
@@ -28,20 +32,23 @@ Cloud observability platforms require streaming proprietary customer prompts and
 
 ## Interface Tour
 
-### Timeline canvas and agent thought inspection
-![Timeline Canvas](docs/images/agent-trace-1.png)
+### Multi-agent swarm canvas and inner monologue inspection
+![Multi-Agent Swarm Canvas](docs/images/agent-trace-1.png)
 
-### Automated infinite loop detection
+### Automated infinite loop and retry anomaly detection
 ![Loop Detection](docs/images/agent-trace-2.png)
 
-### Token waterfall and model cost profiler
+### Token burn waterfall and model cost distribution
 ![Token Waterfall](docs/images/agent-trace-3.png)
 
-### Context window memory diffing with Monaco Editor
+### Context window memory diffing and eviction simulator
 ![Memory Diff](docs/images/agent-trace-4.png)
 
-### Tool execution I/O drawer
-![Tool Inspector](docs/images/agent-trace-5.png)
+### Trajectory autopsy and actionable system prompt repair
+![Trajectory Autopsy](docs/images/agent-trace-5.png)
+
+### Persistent trace library and tag management (IndexedDB)
+![Trace Library](docs/images/agent-trace-6.png)
 
 ## Quick Start
 
