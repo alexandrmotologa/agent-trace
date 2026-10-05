@@ -1,0 +1,309 @@
+{
+  "runId": "trace-research-94821",
+  "name": "Market Intelligence Research Agent",
+  "framework": "custom",
+  "startTimeMs": 0,
+  "endTimeMs": 4200,
+  "durationMs": 4200,
+  "status": "success",
+  "totalTokens": 8450,
+  "promptTokens": 6800,
+  "completionTokens": 1650,
+  "totalCostUsd": 0.04175,
+  "metadata": {
+    "query": "Analyze Q3 2026 enterprise AI infrastructure spending trends",
+    "environment": "production"
+  },
+  "steps": [
+    {
+      "stepIndex": 1,
+      "timestampMs": 0,
+      "thought": "Initial query received. I need to break down enterprise AI infrastructure spending into hardware, cloud hosting, and inference orchestration.",
+      "state": "plan",
+      "llmSpanId": "llm-plan-1",
+      "toolSpanIds": [],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a senior tech analyst agent. Formulate structured research plans and invoke search tools to find current data."
+        },
+        {
+          "role": "user",
+          "content": "Analyze Q3 2026 enterprise AI infrastructure spending trends and provide a cost breakdown."
+        }
+      ],
+      "contextTokenCount": 240
+    },
+    {
+      "stepIndex": 2,
+      "timestampMs": 550,
+      "thought": "Querying latest financial filings and cloud provider capex reports for AI workloads.",
+      "state": "act",
+      "llmSpanId": "llm-act-2",
+      "toolSpanIds": ["tool-search-1", "tool-search-2"],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a senior tech analyst agent. Formulate structured research plans and invoke search tools to find current data."
+        },
+        {
+          "role": "user",
+          "content": "Analyze Q3 2026 enterprise AI infrastructure spending trends and provide a cost breakdown."
+        },
+        {
+          "role": "assistant",
+          "content": "I will execute concurrent searches on enterprise cloud earnings and accelerator supply chains."
+        }
+      ],
+      "contextTokenCount": 850
+    },
+    {
+      "stepIndex": 3,
+      "timestampMs": 1800,
+      "thought": "Examining SEC 10-Q disclosures extracted from cloud vendors. Need to fetch full tables on GPU cluster leasing.",
+      "state": "reflect",
+      "llmSpanId": "llm-reflect-3",
+      "toolSpanIds": ["tool-fetch-1"],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a senior tech analyst agent."
+        },
+        {
+          "role": "assistant",
+          "content": "Received 8 market reports. One report from hyperscalers highlights a 38% increase in inference spend relative to training."
+        }
+      ],
+      "contextTokenCount": 2100
+    },
+    {
+      "stepIndex": 4,
+      "timestampMs": 3100,
+      "thought": "Synthesizing executive summary with comparative tables and projected 2027 CAGR.",
+      "state": "synthesize",
+      "llmSpanId": "llm-synth-4",
+      "toolSpanIds": [],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a senior tech analyst agent."
+        },
+        {
+          "role": "assistant",
+          "content": "Synthesizing data into three pillars: Private On-Prem Clusters, Managed Cloud GPUs, and Token-as-a-Service routing."
+        }
+      ],
+      "contextTokenCount": 3610
+    }
+  ],
+  "spans": [
+    {
+      "id": "thought-step-1",
+      "traceId": "trace-research-94821",
+      "name": "Decompose Query & Formulate Plan",
+      "type": "agent_state",
+      "startTimeMs": 0,
+      "endTimeMs": 520,
+      "durationMs": 520,
+      "status": "success",
+      "stepIndex": 1,
+      "agentThought": "Deconstruct user prompt into 3 search queries: Hyperscaler CapEx, Custom Silicon deployment, and Token API spending.",
+      "agentState": "plan"
+    },
+    {
+      "id": "llm-plan-1",
+      "traceId": "trace-research-94821",
+      "parentId": "thought-step-1",
+      "name": "Planner LLM Call",
+      "type": "llm_call",
+      "startTimeMs": 40,
+      "endTimeMs": 510,
+      "durationMs": 470,
+      "status": "success",
+      "stepIndex": 1,
+      "modelName": "claude-3-5-sonnet",
+      "modelUsage": {
+        "promptTokens": 240,
+        "completionTokens": 180,
+        "totalTokens": 420,
+        "costEstimateUsd": 0.00342
+      },
+      "promptText": "Plan a research workflow for enterprise AI infrastructure spend in Q3 2026.",
+      "completionText": "Plan: 1) Query cloud earnings reports. 2) Check private cloud cluster growth. 3) Compare training vs inference ratios."
+    },
+    {
+      "id": "thought-step-2",
+      "traceId": "trace-research-94821",
+      "name": "Execute Web Retrieval",
+      "type": "agent_state",
+      "startTimeMs": 550,
+      "endTimeMs": 1750,
+      "durationMs": 1200,
+      "status": "success",
+      "stepIndex": 2,
+      "agentThought": "Issuing concurrent web requests to fetch Gartner and IDC data points.",
+      "agentState": "act"
+    },
+    {
+      "id": "llm-act-2",
+      "traceId": "trace-research-94821",
+      "parentId": "thought-step-2",
+      "name": "Tool Selection Inference",
+      "type": "llm_call",
+      "startTimeMs": 570,
+      "endTimeMs": 950,
+      "durationMs": 380,
+      "status": "success",
+      "stepIndex": 2,
+      "modelName": "gpt-4o",
+      "modelUsage": {
+        "promptTokens": 620,
+        "completionTokens": 140,
+        "totalTokens": 760,
+        "costEstimateUsd": 0.00295
+      },
+      "promptText": "Generate search queries for IDC and Gartner enterprise AI cloud report 2026.",
+      "completionText": "call: search_web(query='Q3 2026 enterprise AI infrastructure capex Gartner'); call: search_web(query='Hyperscaler inference cluster capex quarterly report')"
+    },
+    {
+      "id": "tool-search-1",
+      "traceId": "trace-research-94821",
+      "parentId": "llm-act-2",
+      "name": "search_web",
+      "type": "tool_call",
+      "startTimeMs": 980,
+      "endTimeMs": 1420,
+      "durationMs": 440,
+      "status": "success",
+      "stepIndex": 2,
+      "toolCall": {
+        "toolName": "search_web",
+        "inputArgs": {
+          "query": "Q3 2026 enterprise AI infrastructure capex Gartner",
+          "maxResults": 5
+        },
+        "outputResult": {
+          "results": [
+            { "title": "Gartner AI Infrastructure Spending Report", "snippet": "Global enterprise spend on generative AI infrastructure reached $84.2B in Q3 2026, up 42% YoY." },
+            { "title": "IDC Cloud Pulse", "snippet": "Inference now accounts for 61% of total enterprise compute spending." }
+          ]
+        },
+        "executionTimeMs": 440
+      }
+    },
+    {
+      "id": "tool-search-2",
+      "traceId": "trace-research-94821",
+      "parentId": "llm-act-2",
+      "name": "search_web",
+      "type": "tool_call",
+      "startTimeMs": 1010,
+      "endTimeMs": 1690,
+      "durationMs": 680,
+      "status": "success",
+      "stepIndex": 2,
+      "toolCall": {
+        "toolName": "search_web",
+        "inputArgs": {
+          "query": "Hyperscaler inference cluster capex quarterly report",
+          "maxResults": 3
+        },
+        "outputResult": {
+          "results": [
+            { "title": "Hyperscaler Capex Q3", "snippet": "Aggregate hyperscaler capital expenditure crossed $65B with hardware accelerators leading at 72% allocation." }
+          ]
+        },
+        "executionTimeMs": 680
+      }
+    },
+    {
+      "id": "thought-step-3",
+      "traceId": "trace-research-94821",
+      "name": "Deep Content Parsing",
+      "type": "agent_state",
+      "startTimeMs": 1800,
+      "endTimeMs": 3050,
+      "durationMs": 1250,
+      "status": "success",
+      "stepIndex": 3,
+      "agentThought": "Checking detailed breakdown tables from the primary IDC source URL.",
+      "agentState": "reflect"
+    },
+    {
+      "id": "llm-reflect-3",
+      "traceId": "trace-research-94821",
+      "parentId": "thought-step-3",
+      "name": "Evaluator LLM Call",
+      "type": "llm_call",
+      "startTimeMs": 1830,
+      "endTimeMs": 2320,
+      "durationMs": 490,
+      "status": "success",
+      "stepIndex": 3,
+      "modelName": "claude-3-5-sonnet",
+      "modelUsage": {
+        "promptTokens": 1950,
+        "completionTokens": 320,
+        "totalTokens": 2270,
+        "costEstimateUsd": 0.01065
+      },
+      "promptText": "Evaluate sufficiency of search snippets. Fetch URL if deep breakdown tables are missing.",
+      "completionText": "The high-level figures are clear, but we need the exact sub-breakdown for networking vs accelerators. Fetching document."
+    },
+    {
+      "id": "tool-fetch-1",
+      "traceId": "trace-research-94821",
+      "parentId": "llm-reflect-3",
+      "name": "fetch_web_page",
+      "type": "tool_call",
+      "startTimeMs": 2350,
+      "endTimeMs": 3020,
+      "durationMs": 670,
+      "status": "success",
+      "stepIndex": 3,
+      "toolCall": {
+        "toolName": "fetch_web_page",
+        "inputArgs": {
+          "url": "https://analyst-reports.internal/q3-2026-idc-capex-table.html",
+          "format": "markdown"
+        },
+        "outputResult": "| Category | Q3 2025 | Q3 2026 | Growth |\n| AI Accelerators | $32.1B | $51.4B | +60.1% |\n| InfiniBand/RoCE Networking | $7.8B | $12.3B | +57.7% |\n| High Density Liquid Cooling | $2.1B | $4.8B | +128.5% |",
+        "executionTimeMs": 670
+      }
+    },
+    {
+      "id": "thought-step-4",
+      "traceId": "trace-research-94821",
+      "name": "Final Synthesis & Output",
+      "type": "agent_state",
+      "startTimeMs": 3100,
+      "endTimeMs": 4180,
+      "durationMs": 1080,
+      "status": "success",
+      "stepIndex": 4,
+      "agentThought": "All metrics compiled. Drafting finalized structured research brief with cost tables.",
+      "agentState": "synthesize"
+    },
+    {
+      "id": "llm-synth-4",
+      "traceId": "trace-research-94821",
+      "parentId": "thought-step-4",
+      "name": "Synthesis Model Call",
+      "type": "llm_call",
+      "startTimeMs": 3150,
+      "endTimeMs": 4150,
+      "durationMs": 1000,
+      "status": "success",
+      "stepIndex": 4,
+      "modelName": "gpt-4o",
+      "modelUsage": {
+        "promptTokens": 3990,
+        "completionTokens": 1010,
+        "totalTokens": 5000,
+        "costEstimateUsd": 0.02007
+      },
+      "promptText": "Synthesize the gathered metrics into a structured executive report.",
+      "completionText": "### Q3 2026 Enterprise AI Infrastructure Spending Report\n\n1. **Accelerators & Compute**: $51.4B (+60.1% YoY)\n2. **High-Speed Interconnects**: $12.3B (+57.7% YoY)\n3. **Liquid Cooling Infrastructure**: $4.8B (+128.5% YoY)"
+    }
+  ]
+}

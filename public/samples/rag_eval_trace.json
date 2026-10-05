@@ -1,0 +1,202 @@
+{
+  "runId": "trace-rag-88120",
+  "name": "RAG Document Retrieval & Evaluation Agent",
+  "framework": "custom",
+  "startTimeMs": 0,
+  "endTimeMs": 3800,
+  "durationMs": 3800,
+  "status": "success",
+  "totalTokens": 14200,
+  "promptTokens": 12800,
+  "completionTokens": 1400,
+  "totalCostUsd": 0.04600,
+  "metadata": {
+    "collection": "legal_contracts_2026",
+    "topK": 4
+  },
+  "steps": [
+    {
+      "stepIndex": 1,
+      "timestampMs": 0,
+      "thought": "User asked for indemnification clauses and liability limitations across master service agreements.",
+      "state": "plan",
+      "llmSpanId": "llm-rag-1",
+      "toolSpanIds": [],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a legal contract reviewer AI agent. Search semantic indexes and quote precise clauses."
+        },
+        {
+          "role": "user",
+          "content": "What is the liability cap under the 2026 enterprise cloud SLA?"
+        }
+      ],
+      "contextTokenCount": 260
+    },
+    {
+      "stepIndex": 2,
+      "timestampMs": 600,
+      "thought": "Querying vector embeddings index for 'liability cap indemnification aggregate limit'.",
+      "state": "act",
+      "llmSpanId": "llm-rag-2",
+      "toolSpanIds": ["tool-vector-1"],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a legal contract reviewer AI agent."
+        },
+        {
+          "role": "user",
+          "content": "What is the liability cap under the 2026 enterprise cloud SLA?"
+        },
+        {
+          "role": "assistant",
+          "content": "I am querying the contracts vector database."
+        }
+      ],
+      "contextTokenCount": 5460
+    },
+    {
+      "stepIndex": 3,
+      "timestampMs": 2300,
+      "thought": "Vector search returned 4 large contract sections. Synthesizing cross-reference clauses.",
+      "state": "synthesize",
+      "llmSpanId": "llm-rag-3",
+      "toolSpanIds": [],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a legal contract reviewer AI agent."
+        },
+        {
+          "role": "user",
+          "content": "What is the liability cap under the 2026 enterprise cloud SLA?"
+        },
+        {
+          "role": "tool",
+          "content": "[Chunk 1: 1800 words on Section 14 Limitation of Liability... Chunk 2: 1500 words on Section 15 Indemnity...]"
+        }
+      ],
+      "contextTokenCount": 6800
+    }
+  ],
+  "spans": [
+    {
+      "id": "thought-rag-1",
+      "traceId": "trace-rag-88120",
+      "name": "Query Classification & Plan",
+      "type": "agent_state",
+      "startTimeMs": 0,
+      "endTimeMs": 550,
+      "durationMs": 550,
+      "status": "success",
+      "stepIndex": 1,
+      "agentThought": "Classifying legal query intent and generating dense vector search keywords.",
+      "agentState": "plan"
+    },
+    {
+      "id": "llm-rag-1",
+      "traceId": "trace-rag-88120",
+      "parentId": "thought-rag-1",
+      "name": "Embedding Intent Classifier",
+      "type": "llm_call",
+      "startTimeMs": 40,
+      "endTimeMs": 520,
+      "durationMs": 480,
+      "status": "success",
+      "stepIndex": 1,
+      "modelName": "gpt-4o-mini",
+      "modelUsage": { "promptTokens": 260, "completionTokens": 80, "totalTokens": 340, "costEstimateUsd": 0.000087 },
+      "promptText": "Formulate vector query for liability cap.",
+      "completionText": "vector_search(query='liability cap indemnification aggregate limit', topK=4)"
+    },
+    {
+      "id": "thought-rag-2",
+      "traceId": "trace-rag-88120",
+      "name": "Execute Vector Store Query",
+      "type": "agent_state",
+      "startTimeMs": 600,
+      "endTimeMs": 2200,
+      "durationMs": 1600,
+      "status": "success",
+      "stepIndex": 2,
+      "agentThought": "Executing similarity search across Pinecone / Qdrant index.",
+      "agentState": "act"
+    },
+    {
+      "id": "tool-vector-1",
+      "traceId": "trace-rag-88120",
+      "parentId": "thought-rag-2",
+      "name": "vector_search",
+      "type": "tool_call",
+      "startTimeMs": 650,
+      "endTimeMs": 1350,
+      "durationMs": 700,
+      "status": "success",
+      "stepIndex": 2,
+      "toolCall": {
+        "toolName": "vector_search",
+        "inputArgs": {
+          "collection": "enterprise_sla_2026",
+          "query": "liability cap indemnification aggregate limit",
+          "topK": 4
+        },
+        "outputResult": {
+          "matches": [
+            { "id": "doc_sec14_01", "score": 0.942, "text": "14.1 Direct Damages Cap: Except for Gross Negligence or willful misconduct, each party's maximum aggregate liability shall not exceed twelve (12) times the monthly fees paid." },
+            { "id": "doc_sec14_02", "score": 0.915, "text": "14.2 Consequential Damages Waiver: Neither party shall be liable for indirect, incidental, special or punitive damages." },
+            { "id": "doc_sec15_01", "score": 0.887, "text": "15.1 IP Indemnification: Vendor will defend and hold harmless Customer against third-party patent or copyright infringement claims up to $10,000,000." },
+            { "id": "doc_sec16_04", "score": 0.862, "text": "16.4 Data Breach Coverage: Super-cap for Security Incidents equals two times the general direct damage cap." }
+          ]
+        },
+        "executionTimeMs": 700
+      }
+    },
+    {
+      "id": "llm-rag-2",
+      "traceId": "trace-rag-88120",
+      "parentId": "thought-rag-2",
+      "name": "Context Assimilation LLM",
+      "type": "llm_call",
+      "startTimeMs": 1390,
+      "endTimeMs": 2180,
+      "durationMs": 790,
+      "status": "success",
+      "stepIndex": 2,
+      "modelName": "claude-3-5-sonnet",
+      "modelUsage": { "promptTokens": 5460, "completionTokens": 310, "totalTokens": 5770, "costEstimateUsd": 0.02103 },
+      "promptText": "Review retrieved contract sections and prepare synthesis.",
+      "completionText": "The general liability cap is 12x monthly fees, with a $10M super-cap for IP indemnification."
+    },
+    {
+      "id": "thought-rag-3",
+      "traceId": "trace-rag-88120",
+      "name": "Synthesize Legal Answer",
+      "type": "agent_state",
+      "startTimeMs": 2300,
+      "endTimeMs": 3750,
+      "durationMs": 1450,
+      "status": "success",
+      "stepIndex": 3,
+      "agentThought": "Finalizing legal advisory response citing Section 14 and Section 15.",
+      "agentState": "synthesize"
+    },
+    {
+      "id": "llm-rag-3",
+      "traceId": "trace-rag-88120",
+      "parentId": "thought-rag-3",
+      "name": "Final Response LLM",
+      "type": "llm_call",
+      "startTimeMs": 2350,
+      "endTimeMs": 3720,
+      "durationMs": 1370,
+      "status": "success",
+      "stepIndex": 3,
+      "modelName": "claude-3-5-sonnet",
+      "modelUsage": { "promptTokens": 6800, "completionTokens": 920, "totalTokens": 7720, "costEstimateUsd": 0.03420 },
+      "promptText": "Draft clear legal answer with citations.",
+      "completionText": "Under the 2026 Enterprise Cloud SLA, Section 14 establishes a primary liability cap equal to 12 times the monthly fees paid. Section 15 provides an IP indemnity carveout capped at $10,000,000."
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "runId": "trace-tool-fail-10492",
+  "name": "Database Analytics Agent (Tool Recovery)",
+  "framework": "custom",
+  "startTimeMs": 0,
+  "endTimeMs": 3500,
+  "durationMs": 3500,
+  "status": "success",
+  "totalTokens": 5400,
+  "promptTokens": 4600,
+  "completionTokens": 800,
+  "totalCostUsd": 0.01950,
+  "metadata": {
+    "task": "Aggregate monthly churn metrics from billing replica",
+    "recovered": true
+  },
+  "steps": [
+    {
+      "stepIndex": 1,
+      "timestampMs": 0,
+      "thought": "I need to run SQL on billing_replica_db to aggregate user churn.",
+      "state": "act",
+      "llmSpanId": "llm-sql-1",
+      "toolSpanIds": ["tool-sql-exec-1"],
+      "contextMessages": [
+        { "role": "user", "content": "Fetch churn metrics for September 2026." }
+      ],
+      "contextTokenCount": 350
+    },
+    {
+      "stepIndex": 2,
+      "timestampMs": 1400,
+      "thought": "Primary replica timed out with error 504. Switching to cached snapshot warehouse.",
+      "state": "reflect",
+      "llmSpanId": "llm-sql-2",
+      "toolSpanIds": ["tool-sql-exec-2"],
+      "contextMessages": [
+        { "role": "user", "content": "Fetch churn metrics for September 2026." },
+        { "role": "tool", "content": "Error: Connection to billing_replica timed out after 1000ms" }
+      ],
+      "contextTokenCount": 980
+    },
+    {
+      "stepIndex": 3,
+      "timestampMs": 2600,
+      "thought": "Snapshot returned successfully. Preparing summary for user.",
+      "state": "synthesize",
+      "llmSpanId": "llm-sql-3",
+      "toolSpanIds": [],
+      "contextMessages": [
+        { "role": "user", "content": "Fetch churn metrics for September 2026." },
+        { "role": "assistant", "content": "September 2026 churn rate was 1.42%." }
+      ],
+      "contextTokenCount": 1820
+    }
+  ],
+  "spans": [
+    {
+      "id": "state-sql-1",
+      "traceId": "trace-tool-fail-10492",
+      "name": "Prepare SQL Query",
+      "type": "agent_state",
+      "startTimeMs": 0,
+      "endTimeMs": 1350,
+      "durationMs": 1350,
+      "status": "success",
+      "stepIndex": 1,
+      "agentThought": "Constructing SQL statement.",
+      "agentState": "act"
+    },
+    {
+      "id": "llm-sql-1",
+      "traceId": "trace-tool-fail-10492",
+      "parentId": "state-sql-1",
+      "name": "SQL Query Generator",
+      "type": "llm_call",
+      "startTimeMs": 20,
+      "endTimeMs": 420,
+      "durationMs": 400,
+      "status": "success",
+      "stepIndex": 1,
+      "modelName": "gpt-4o",
+      "modelUsage": { "promptTokens": 350, "completionTokens": 90, "totalTokens": 440, "costEstimateUsd": 0.00177 },
+      "promptText": "Generate SQL for September 2026 churn.",
+      "completionText": "SELECT count(*) FROM churn_events WHERE event_date >= '2026-09-01';"
+    },
+    {
+      "id": "tool-sql-exec-1",
+      "traceId": "trace-tool-fail-10492",
+      "parentId": "llm-sql-1",
+      "name": "api_execute_sql",
+      "type": "tool_call",
+      "startTimeMs": 450,
+      "endTimeMs": 1320,
+      "durationMs": 870,
+      "status": "error",
+      "stepIndex": 1,
+      "toolCall": {
+        "toolName": "api_execute_sql",
+        "inputArgs": {
+          "database": "billing_replica_db",
+          "query": "SELECT count(*) FROM churn_events WHERE event_date >= '2026-09-01';"
+        },
+        "outputResult": null,
+        "error": "HTTP 504: Connection to billing_replica timed out after 1000ms",
+        "isError": true,
+        "executionTimeMs": 870
+      }
+    },
+    {
+      "id": "state-sql-2",
+      "traceId": "trace-tool-fail-10492",
+      "name": "Fallback to Data Warehouse",
+      "type": "agent_state",
+      "startTimeMs": 1400,
+      "endTimeMs": 2550,
+      "durationMs": 1150,
+      "status": "success",
+      "stepIndex": 2,
+      "agentThought": "Detected failure on replica. Redirecting query to Snowflake analytical warehouse.",
+      "agentState": "reflect"
+    },
+    {
+      "id": "llm-sql-2",
+      "traceId": "trace-tool-fail-10492",
+      "parentId": "state-sql-2",
+      "name": "Fallback Routing LLM",
+      "type": "llm_call",
+      "startTimeMs": 1430,
+      "endTimeMs": 1820,
+      "durationMs": 390,
+      "status": "success",
+      "stepIndex": 2,
+      "modelName": "gpt-4o",
+      "modelUsage": { "promptTokens": 980, "completionTokens": 110, "totalTokens": 1090, "costEstimateUsd": 0.00355 },
+      "promptText": "Connection timed out. Choose fallback data source.",
+      "completionText": "api_execute_sql(database='analytics_warehouse_dw', query='SELECT count(*) FROM analytics.churn_daily_2026 WHERE month = 9;')"
+    },
+    {
+      "id": "tool-sql-exec-2",
+      "traceId": "trace-tool-fail-10492",
+      "parentId": "llm-sql-2",
+      "name": "api_execute_sql",
+      "type": "tool_call",
+      "startTimeMs": 1850,
+      "endTimeMs": 2520,
+      "durationMs": 670,
+      "status": "success",
+      "stepIndex": 2,
+      "toolCall": {
+        "toolName": "api_execute_sql",
+        "inputArgs": {
+          "database": "analytics_warehouse_dw",
+          "query": "SELECT count(*) FROM analytics.churn_daily_2026 WHERE month = 9;"
+        },
+        "outputResult": { "churn_rate_pct": 1.42, "total_churned_accounts": 143, "active_arr": "$18,400,000" },
+        "executionTimeMs": 670
+      }
+    },
+    {
+      "id": "state-sql-3",
+      "traceId": "trace-tool-fail-10492",
+      "name": "Format Reporting Summary",
+      "type": "agent_state",
+      "startTimeMs": 2600,
+      "endTimeMs": 3480,
+      "durationMs": 880,
+      "status": "success",
+      "stepIndex": 3,
+      "agentThought": "Formatting final output for stakeholder.",
+      "agentState": "synthesize"
+    },
+    {
+      "id": "llm-sql-3",
+      "traceId": "trace-tool-fail-10492",
+      "parentId": "state-sql-3",
+      "name": "Output LLM Call",
+      "type": "llm_call",
+      "startTimeMs": 2630,
+      "endTimeMs": 3450,
+      "durationMs": 820,
+      "status": "success",
+      "stepIndex": 3,
+      "modelName": "gpt-4o",
+      "modelUsage": { "promptTokens": 1820, "completionTokens": 180, "totalTokens": 2000, "costEstimateUsd": 0.00635 },
+      "promptText": "Format report.",
+      "completionText": "September 2026 Churn Analysis: The aggregate monthly logo churn rate stood at 1.42% with 143 total accounts churned."
+    }
+  ]
+}
