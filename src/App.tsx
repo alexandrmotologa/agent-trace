@@ -13,6 +13,8 @@ import { FileDropzone } from './components/Ingestion/FileDropzone'
 import { LiveSimulator } from './components/Ingestion/LiveSimulator'
 import { MermaidModal } from './components/Modals/MermaidModal'
 import { ForkStepModal } from './components/Modals/ForkStepModal'
+import { TraceLibraryModal } from './components/Modals/TraceLibraryModal'
+import { AutopsyModal } from './components/Modals/AutopsyModal'
 import { Sparkles, AlertCircle } from 'lucide-react'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
@@ -83,6 +85,8 @@ export function App() {
       <LiveSimulator />
       <MermaidModal />
       <ForkStepModal />
+      <TraceLibraryModal />
+      <AutopsyModal />
     </div>
   )
 }

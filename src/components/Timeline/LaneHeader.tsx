@@ -1,5 +1,5 @@
 import React from 'react'
-import { Brain, Cpu, Wrench, Layers, AlertTriangle, Clock, Flame, Filter } from 'lucide-react'
+import { Brain, Cpu, Wrench, Layers, AlertTriangle, Clock, Flame, Filter, Bot } from 'lucide-react'
 import { useTraceStore } from '../../store/traceStore'
 
 export const LaneHeader: React.FC = () => {
@@ -8,6 +8,8 @@ export const LaneHeader: React.FC = () => {
   const setFilterLane = useTraceStore((state) => state.setFilterLane)
   const triageFilter = useTraceStore((state) => state.triageFilter)
   const setTriageFilter = useTraceStore((state) => state.setTriageFilter)
+  const filterAgent = useTraceStore((state) => state.filterAgent)
+  const setFilterAgent = useTraceStore((state) => state.setFilterAgent)
 
   const agentSpansCount =
     activeRun?.spans.filter((s) => s.type === 'agent_state').length || 0
@@ -22,6 +24,10 @@ export const LaneHeader: React.FC = () => {
     activeRun?.spans.filter((s) => s.durationMs >= 1000).length || 0
   const highTokenCount =
     activeRun?.spans.filter((s) => (s.modelUsage?.totalTokens || 0) >= 1000).length || 0
+
+  const distinctAgents = Array.from(
+    new Set(activeRun?.spans.map((s) => s.agentName).filter(Boolean) as string[])
+  )
 
   return (
     <div className="absolute top-12 left-3 z-10 flex flex-col gap-2.5 pointer-events-auto">
@@ -162,6 +168,42 @@ export const LaneHeader: React.FC = () => {
           <span className="text-[10px] text-slate-500">{highTokenCount}</span>
         </button>
       </div>
+
+      {/* Multi-Agent Swarm filter section */}
+      {distinctAgents.length > 1 && (
+        <div className="bg-slate-900/95 backdrop-blur-md border border-slate-800 rounded-lg p-1.5 shadow-xl flex flex-col gap-1 w-44">
+          <div className="px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-slate-500 flex items-center gap-1.5 border-b border-slate-800/60 mb-0.5">
+            <Bot className="w-3 h-3 text-violet-400" />
+            <span>Agent Swarm</span>
+          </div>
+
+          <button
+            onClick={() => setFilterAgent(null)}
+            className={`flex items-center justify-between px-2 py-1 rounded text-[11px] font-medium transition ${
+              filterAgent === null
+                ? 'bg-slate-800 text-white'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+            }`}
+          >
+            <span>All Agents</span>
+            <span className="text-[10px] text-slate-500">{distinctAgents.length}</span>
+          </button>
+
+          {distinctAgents.map((ag) => (
+            <button
+              key={ag}
+              onClick={() => setFilterAgent(ag)}
+              className={`flex items-center justify-between px-2 py-1 rounded text-[11px] font-medium transition truncate text-left ${
+                filterAgent === ag
+                  ? 'bg-violet-950/80 text-violet-200 border border-violet-800/60'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+              }`}
+            >
+              <span className="truncate">{ag}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -13,16 +13,17 @@ Cloud observability platforms require streaming proprietary customer prompts and
 ## Key Features
 
 - **Multi-lane timeline canvas**: Tracks agent reasoning steps, model completions, and tool calls across synchronized visual rows built with React Flow.
+- **Persistent local trace library**: Stores historical traces in IndexedDB with tags, favorites, and search across browser sessions without cloud storage.
+- **Hierarchical multi-agent swarms**: Visualizes parent-child delegations and swarm agent swimlanes for CrewAI, AutoGen, and LangGraph architectures.
+- **Trajectory autopsy and root-cause explainer**: Analyzes reasoning loops, exceptions, and context degradation with local Ollama models or built-in heuristic rules, outputting actionable system prompt fixes.
+- **Context eviction and sliding window simulator**: Tests token reductions and dollar savings for retention windows and tool output truncation before changing production code.
 - **Context memory diff engine**: Compares prompt and context growth step by step in Monaco Editor. Highlights tokens added by tool executions and flags context bloat exceeding threshold limits.
 - **Context window composition bar**: Visualizes token distribution across System prompt, User queries, Assistant monologue, and Tool outputs with bloat alerts.
-- **Loop and anomaly detection**: Flags cyclic tool execution loops, argument thrashing, and elevated failure rates.
 - **Trace comparison and divergence diffing**: Compares two agent runs side by side to diagnose why one run succeeded while another failed or cost 3x more.
 - **What-If prompt playground**: Branches a trajectory at any step, tests alternative prompts or tool returns, and previews token impact before re-running.
 - **Mermaid and standalone HTML exports**: Generates clean sequence diagrams, flowcharts, and self-contained HTML audit reports with embedded charts for sharing without server hosting.
-- **Local OTLP HTTP collector**: Built-in background ingestion daemon listening on port 4318 for live trace streaming from LangChain, LlamaIndex, or OpenTelemetry SDKs.
+- **Command-line interface (CLI)**: Inspect trace files and start local OTLP ingestion daemons via `npx agent-trace`.
 - **Token waterfall and cost profiler**: Calculates cumulative token burn curves and dollar costs across GPT-4o, Claude 3.5 Sonnet, Gemini, DeepSeek, and local Ollama models.
-- **Multi-format ingestion**: Reads OpenTelemetry (OTLP) HTTP JSON payloads, LangChain run trees, and custom JSON/JSONL traces.
-- **Mock fixture export**: Exports sanitized execution runs as standalone JSON fixtures for reproducible regression tests in CI pipelines.
 - **Interactive trajectory scrubber and shortcuts**: Keyboard-driven scrubber (Space to play, arrow keys to step, 1 to 4 for tabs, Esc to dismiss drawer).
 
 ## Interface Tour

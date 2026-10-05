@@ -1,0 +1,208 @@
+{
+  "runId": "trace-swarm-880",
+  "name": "Hierarchical Swarm: Market Competitor Analysis",
+  "framework": "crewai",
+  "startTimeMs": 0,
+  "endTimeMs": 5400,
+  "durationMs": 5400,
+  "status": "success",
+  "totalTokens": 8920,
+  "promptTokens": 7100,
+  "completionTokens": 1820,
+  "totalCostUsd": 0.042,
+  "steps": [
+    {
+      "stepIndex": 1,
+      "timestampMs": 0,
+      "agentId": "agent-orchestrator",
+      "agentName": "Lead Orchestrator",
+      "thought": "Decomposing user request into Web Research and Financial Synthesis tasks.",
+      "state": "plan",
+      "toolSpanIds": [],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a lead orchestrator AI. Delegate tasks to specialized subagents."
+        },
+        {
+          "role": "user",
+          "content": "Perform deep competitor benchmark between AcmeCorp and BetaSaaS."
+        }
+      ],
+      "contextTokenCount": 540
+    },
+    {
+      "stepIndex": 2,
+      "timestampMs": 850,
+      "agentId": "agent-researcher",
+      "agentName": "Research Subagent",
+      "thought": "Querying search index for AcmeCorp pricing plans and tier limits.",
+      "state": "act",
+      "toolSpanIds": ["span-sw-tool-1"],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a research agent. Fetch and extract structured market data."
+        },
+        {
+          "role": "user",
+          "content": "Fetch AcmeCorp pricing table."
+        }
+      ],
+      "contextTokenCount": 2400
+    },
+    {
+      "stepIndex": 3,
+      "timestampMs": 2600,
+      "agentId": "agent-researcher",
+      "agentName": "Research Subagent",
+      "thought": "Querying search index for BetaSaaS pricing plans.",
+      "state": "act",
+      "toolSpanIds": ["span-sw-tool-2"],
+      "contextMessages": [
+        {
+          "role": "assistant",
+          "content": "AcmeCorp starter tier is $29/mo, Pro is $99/mo."
+        },
+        {
+          "role": "user",
+          "content": "Now fetch BetaSaaS pricing."
+        }
+      ],
+      "contextTokenCount": 4200
+    },
+    {
+      "stepIndex": 4,
+      "timestampMs": 3900,
+      "agentId": "agent-analyst",
+      "agentName": "Financial Analyst Subagent",
+      "thought": "Calculating price-to-feature matrix and profit margins comparison.",
+      "state": "synthesize",
+      "toolSpanIds": [],
+      "contextMessages": [
+        {
+          "role": "system",
+          "content": "You are a financial analyst. Synthesize findings into clear executive summary."
+        },
+        {
+          "role": "user",
+          "content": "Synthesize AcmeCorp vs BetaSaaS into matrix."
+        }
+      ],
+      "contextTokenCount": 5800
+    }
+  ],
+  "spans": [
+    {
+      "id": "span-sw-1",
+      "traceId": "trace-swarm-880",
+      "name": "Lead Orchestrator Planning",
+      "type": "agent_state",
+      "startTimeMs": 0,
+      "endTimeMs": 300,
+      "durationMs": 300,
+      "status": "success",
+      "stepIndex": 1,
+      "agentId": "agent-orchestrator",
+      "agentName": "Lead Orchestrator",
+      "agentThought": "Decomposing user request into Web Research and Financial Synthesis tasks.",
+      "agentState": "plan"
+    },
+    {
+      "id": "span-sw-llm-1",
+      "traceId": "trace-swarm-880",
+      "parentId": "span-sw-1",
+      "name": "gpt-4o",
+      "type": "llm_call",
+      "startTimeMs": 300,
+      "endTimeMs": 850,
+      "durationMs": 550,
+      "status": "success",
+      "stepIndex": 1,
+      "agentId": "agent-orchestrator",
+      "agentName": "Lead Orchestrator",
+      "modelName": "gpt-4o",
+      "modelUsage": {
+        "promptTokens": 450,
+        "completionTokens": 90,
+        "totalTokens": 540,
+        "costEstimateUsd": 0.002
+      },
+      "promptText": "Plan subagent delegation for market analysis.",
+      "completionText": "Delegate: Task 1 -> Research Agent, Task 2 -> Analyst Agent."
+    },
+    {
+      "id": "span-sw-2",
+      "traceId": "trace-swarm-880",
+      "name": "Research Subagent Crawl AcmeCorp",
+      "type": "agent_state",
+      "startTimeMs": 850,
+      "endTimeMs": 1200,
+      "durationMs": 350,
+      "status": "success",
+      "stepIndex": 2,
+      "agentId": "agent-researcher",
+      "agentName": "Research Subagent",
+      "isSubagent": true,
+      "agentThought": "Querying search index for AcmeCorp pricing plans and tier limits.",
+      "agentState": "act"
+    },
+    {
+      "id": "span-sw-tool-1",
+      "traceId": "trace-swarm-880",
+      "parentId": "span-sw-2",
+      "name": "web_search",
+      "type": "tool_call",
+      "startTimeMs": 1200,
+      "endTimeMs": 2600,
+      "durationMs": 1400,
+      "status": "success",
+      "stepIndex": 2,
+      "agentId": "agent-researcher",
+      "agentName": "Research Subagent",
+      "isSubagent": true,
+      "toolCall": {
+        "toolName": "web_search",
+        "inputArgs": { "query": "AcmeCorp pricing 2026 plans" },
+        "outputResult": { "plans": [{ "name": "Starter", "price": 29 }, { "name": "Pro", "price": 99 }] },
+        "executionTimeMs": 1400
+      }
+    },
+    {
+      "id": "span-sw-tool-2",
+      "traceId": "trace-swarm-880",
+      "name": "web_search",
+      "type": "tool_call",
+      "startTimeMs": 2600,
+      "endTimeMs": 3900,
+      "durationMs": 1300,
+      "status": "success",
+      "stepIndex": 3,
+      "agentId": "agent-researcher",
+      "agentName": "Research Subagent",
+      "isSubagent": true,
+      "toolCall": {
+        "toolName": "web_search",
+        "inputArgs": { "query": "BetaSaaS pricing comparison" },
+        "outputResult": { "plans": [{ "name": "Basic", "price": 35 }, { "name": "Enterprise", "price": 120 }] },
+        "executionTimeMs": 1300
+      }
+    },
+    {
+      "id": "span-sw-3",
+      "traceId": "trace-swarm-880",
+      "name": "Financial Analyst Synthesis",
+      "type": "agent_state",
+      "startTimeMs": 3900,
+      "endTimeMs": 5400,
+      "durationMs": 1500,
+      "status": "success",
+      "stepIndex": 4,
+      "agentId": "agent-analyst",
+      "agentName": "Financial Analyst Subagent",
+      "isSubagent": true,
+      "agentThought": "Calculating price-to-feature matrix and profit margins comparison.",
+      "agentState": "synthesize"
+    }
+  ]
+}

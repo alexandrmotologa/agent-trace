@@ -11,6 +11,8 @@ interface UiStoreState {
   isMermaidModalOpen: boolean
   isForkModalOpen: boolean
   isCompareModalOpen: boolean
+  isLibraryModalOpen: boolean
+  isAutopsyModalOpen: boolean
   zoomLevel: number
   showMiniMap: boolean
   showRuler: boolean
@@ -24,6 +26,8 @@ interface UiStoreState {
   setMermaidModalOpen: (open: boolean) => void
   setForkModalOpen: (open: boolean) => void
   setCompareModalOpen: (open: boolean) => void
+  setLibraryModalOpen: (open: boolean) => void
+  setAutopsyModalOpen: (open: boolean) => void
   setZoomLevel: (zoom: number) => void
   toggleMiniMap: () => void
   toggleRuler: () => void
@@ -38,6 +42,8 @@ export const useUiStore = create<UiStoreState>((set) => ({
   isMermaidModalOpen: false,
   isForkModalOpen: false,
   isCompareModalOpen: false,
+  isLibraryModalOpen: false,
+  isAutopsyModalOpen: false,
   zoomLevel: 1,
   showMiniMap: true,
   showRuler: true,
@@ -50,6 +56,8 @@ export const useUiStore = create<UiStoreState>((set) => ({
   setMermaidModalOpen: (open) => set({ isMermaidModalOpen: open }),
   setForkModalOpen: (open) => set({ isForkModalOpen: open }),
   setCompareModalOpen: (open) => set({ isCompareModalOpen: open }),
+  setLibraryModalOpen: (open) => set({ isLibraryModalOpen: open }),
+  setAutopsyModalOpen: (open) => set({ isAutopsyModalOpen: open }),
   setZoomLevel: (zoom) => set({ zoomLevel: zoom }),
   toggleMiniMap: () => set((state) => ({ showMiniMap: !state.showMiniMap })),
   toggleRuler: () => set((state) => ({ showRuler: !state.showRuler })),

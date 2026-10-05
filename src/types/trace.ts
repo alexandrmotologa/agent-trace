@@ -43,6 +43,10 @@ export interface Span {
   durationMs: number
   status: SpanStatus
   stepIndex: number
+  agentId?: string
+  agentName?: string
+  isSubagent?: boolean
+  parentSpanId?: string
   agentThought?: string
   agentState?: AgentState
   modelName?: string
@@ -57,6 +61,8 @@ export interface Span {
 export interface AgentStep {
   stepIndex: number
   timestampMs: number
+  agentId?: string
+  agentName?: string
   thought?: string
   state?: AgentState
   llmSpanId?: string

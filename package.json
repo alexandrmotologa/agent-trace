@@ -9,7 +9,11 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "collector": "node server/otlpCollector.mjs"
+    "collector": "node server/otlpCollector.mjs",
+    "cli": "node bin/agent-trace.mjs"
+  },
+  "bin": {
+    "agent-trace": "./bin/agent-trace.mjs"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",

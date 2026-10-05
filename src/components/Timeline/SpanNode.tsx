@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Handle, Position } from '@xyflow/react'
 import type { Span } from '../../types/trace'
 import { formatDuration, formatTokens, formatCost } from '../../utils/formatters'
-import { Brain, Cpu, Wrench, AlertTriangle, CheckCircle2, Clock, Copy, Check } from 'lucide-react'
+import { Brain, Cpu, Wrench, AlertTriangle, CheckCircle2, Clock, Copy, Check, Bot } from 'lucide-react'
 import { useTraceStore } from '../../store/traceStore'
 
 interface SpanNodeData {
@@ -78,6 +78,13 @@ export const SpanNode: React.FC<{ data: SpanNodeData }> = ({ data }) => {
         position={Position.Left}
         className="!bg-slate-400 !w-2 !h-2 !border-none"
       />
+
+      {span.agentName && (
+        <div className="flex items-center gap-1 mb-1 text-[10px] font-mono text-violet-300 bg-violet-950/60 border border-violet-800/40 rounded px-1.5 py-0.5 w-fit">
+          <Bot className="w-2.5 h-2.5 text-violet-400 shrink-0" />
+          <span className="truncate max-w-[170px]">{span.agentName}</span>
+        </div>
+      )}
 
       <div className="flex items-center justify-between gap-1.5 mb-1.5">
         <div className="flex items-center gap-1.5 overflow-hidden">

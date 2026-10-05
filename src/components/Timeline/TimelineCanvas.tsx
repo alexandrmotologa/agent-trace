@@ -24,6 +24,7 @@ export const TimelineCanvas: React.FC = () => {
   const selectedSpanId = useTraceStore((state) => state.selectedSpanId)
   const filterLane = useTraceStore((state) => state.filterLane)
   const triageFilter = useTraceStore((state) => state.triageFilter)
+  const filterAgent = useTraceStore((state) => state.filterAgent)
   const searchQuery = useTraceStore((state) => state.searchQuery.toLowerCase().trim())
   const playbackStep = useTraceStore((state) => state.playbackStep)
 
@@ -50,6 +51,11 @@ export const TimelineCanvas: React.FC = () => {
         if (s.durationMs < 1000) return false
       } else if (triageFilter === 'high_tokens') {
         if ((s.modelUsage?.totalTokens || 0) < 1000) return false
+      }
+
+      // Swarm subagent filter
+      if (filterAgent && s.agentName && s.agentName !== filterAgent) {
+        return false
       }
 
       // Search filter

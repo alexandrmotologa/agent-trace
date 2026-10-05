@@ -4,6 +4,7 @@ import type { AnomalyReport, ModelCostStats, TokenBurnPoint } from '../types/ana
 import { detectAnomalies } from '../engine/loopDetector'
 import { computeRunCostBreakdown } from '../engine/costEngine'
 import { normalizeTraceData } from '../engine/normalizer'
+import { saveTraceRecord } from '../engine/db'
 
 export type TriageFilter = 'all' | 'errors_only' | 'slow_only' | 'high_tokens'
 
@@ -20,6 +21,7 @@ interface TraceStoreState {
   playbackSpeed: number
   filterLane: 'all' | 'agent' | 'llm' | 'tool'
   triageFilter: TriageFilter
+  filterAgent: string | null
   searchQuery: string
   isLoading: boolean
   error: string | null
@@ -34,6 +36,7 @@ interface TraceStoreState {
   selectStep: (stepIndex: number | null) => void
   setFilterLane: (lane: 'all' | 'agent' | 'llm' | 'tool') => void
   setTriageFilter: (filter: TriageFilter) => void
+  setFilterAgent: (agent: string | null) => void
   setSearchQuery: (query: string) => void
   setPlaybackStep: (step: number) => void
   setIsPlaying: (playing: boolean) => void
@@ -59,11 +62,13 @@ export const useTraceStore = create<TraceStoreState>((set, get) => ({
   playbackSpeed: 1,
   filterLane: 'all',
   triageFilter: 'all',
+  filterAgent: null,
   searchQuery: '',
   isLoading: false,
   error: null,
 
   setCompareRun: (run) => set({ compareRun: run }),
+  setFilterAgent: (agent) => set({ filterAgent: agent }),
 
   loadCompareSample: async (sampleFileName: string) => {
     try {
@@ -114,6 +119,9 @@ export const useTraceStore = create<TraceStoreState>((set, get) => ({
     })
 
     const initialSpan = run.spans[0]?.id || null
+
+    // Autosave run to local persistent IndexedDB
+    saveTraceRecord(run).catch(() => {})
 
     set({
       activeRun: run,

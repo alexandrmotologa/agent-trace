@@ -1,17 +1,18 @@
 import React, { useState } from 'react'
 import { useTraceStore } from '../../store/traceStore'
-import { AlertOctagon, AlertTriangle, ArrowRight, ChevronDown, ChevronUp, ShieldAlert } from 'lucide-react'
+import { useUiStore } from '../../store/uiStore'
+import { AlertOctagon, AlertTriangle, ArrowRight, ChevronDown, ChevronUp, ShieldAlert, Stethoscope } from 'lucide-react'
 
 export const AnomalyBanner: React.FC = () => {
   const anomalies = useTraceStore((state) => state.anomalies)
   const selectStep = useTraceStore((state) => state.selectStep)
   const setPlaybackStep = useTraceStore((state) => state.setPlaybackStep)
+  const setAutopsyModalOpen = useUiStore((state) => state.setAutopsyModalOpen)
   const [isExpanded, setIsExpanded] = useState(false)
 
   if (!anomalies || anomalies.length === 0) return null
 
   const topAnomaly = anomalies[0]
-
 
   const handleJumpToStep = (stepIndex: number) => {
     setPlaybackStep(stepIndex)
@@ -32,6 +33,14 @@ export const AnomalyBanner: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setAutopsyModalOpen(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-800/80 hover:bg-red-700 text-white font-medium transition text-[11px] shadow-sm"
+          >
+            <Stethoscope className="w-3 h-3" />
+            <span>Trajectory Autopsy</span>
+          </button>
+
           {topAnomaly.stepIndices.length > 0 && (
             <button
               onClick={() => handleJumpToStep(topAnomaly.stepIndices[0])}
