@@ -14,11 +14,16 @@ Cloud observability platforms require streaming proprietary customer prompts and
 
 - **Multi-lane timeline canvas**: Tracks agent reasoning steps, model completions, and tool calls across synchronized visual rows built with React Flow.
 - **Context memory diff engine**: Compares prompt and context growth step by step in Monaco Editor. Highlights tokens added by tool executions and flags context bloat exceeding threshold limits.
+- **Context window composition bar**: Visualizes token distribution across System prompt, User queries, Assistant monologue, and Tool outputs with bloat alerts.
 - **Loop and anomaly detection**: Flags cyclic tool execution loops, argument thrashing, and elevated failure rates.
+- **Trace comparison and divergence diffing**: Compares two agent runs side by side to diagnose why one run succeeded while another failed or cost 3x more.
+- **What-If prompt playground**: Branches a trajectory at any step, tests alternative prompts or tool returns, and previews token impact before re-running.
+- **Mermaid and standalone HTML exports**: Generates clean sequence diagrams, flowcharts, and self-contained HTML audit reports with embedded charts for sharing without server hosting.
+- **Local OTLP HTTP collector**: Built-in background ingestion daemon listening on port 4318 for live trace streaming from LangChain, LlamaIndex, or OpenTelemetry SDKs.
 - **Token waterfall and cost profiler**: Calculates cumulative token burn curves and dollar costs across GPT-4o, Claude 3.5 Sonnet, Gemini, DeepSeek, and local Ollama models.
 - **Multi-format ingestion**: Reads OpenTelemetry (OTLP) HTTP JSON payloads, LangChain run trees, and custom JSON/JSONL traces.
 - **Mock fixture export**: Exports sanitized execution runs as standalone JSON fixtures for reproducible regression tests in CI pipelines.
-- **Interactive trajectory scrubber**: Step forward, step back, or play through the trajectory at 0.5x to 4x playback speed.
+- **Interactive trajectory scrubber and shortcuts**: Keyboard-driven scrubber (Space to play, arrow keys to step, 1 to 4 for tabs, Esc to dismiss drawer).
 
 ## Interface Tour
 
@@ -58,6 +63,34 @@ npm run dev
 ```
 
 Open `http://localhost:5173` in your browser.
+
+### Live OpenTelemetry Collector
+
+To stream traces directly from Python or Node.js agent frameworks into the web UI in real time, start the built-in OTLP collector daemon:
+
+```bash
+npm run collector
+```
+
+The collector listens on `http://localhost:4318/v1/traces` and pushes events into the browser via Server-Sent Events.
+
+Set the standard OpenTelemetry environment variable in your agent script:
+
+```bash
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
+```
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+| --- | --- |
+| `Space` | Play or pause timeline scrubber playback |
+| `Left Arrow` / `Right Arrow` | Step backward or forward through trajectory steps |
+| `1` | Switch drawer to Prompt & LLM View |
+| `2` | Switch drawer to Tool Call View |
+| `3` | Switch drawer to Memory Diff View |
+| `4` | Switch drawer to Raw JSON View |
+| `Escape` | Close inspection drawer or active modal |
 
 ### Running tests
 
@@ -125,8 +158,12 @@ The project is structured into modular engines:
 - `src/engine/normalizer.ts`: Unifies OTLP, LangChain, and custom JSON/JSONL inputs into a standardized `AgentRun` model.
 - `src/engine/loopDetector.ts`: Analyzes tool arguments and state sequences to identify infinite retry loops, oscillation between two tools, and sudden context explosions.
 - `src/engine/costEngine.ts`: Tracks token pricing for OpenAI, Anthropic, Google Gemini, DeepSeek, and self-hosted models.
-- `src/engine/diffEngine.ts`: Formats message history and calculates line/token differentials for Monaco Diff Editor.
+- `src/engine/diffEngine.ts`: Formats message history and calculates line and token differentials for Monaco Diff Editor.
+- `src/engine/contextComposition.ts`: Computes prompt breakdown percentages across system, user, assistant, and tool segments with bloat threshold detection.
+- `src/engine/mermaidExporter.ts`: Generates sequence diagrams and flowcharts for technical documentation.
+- `src/engine/htmlReportExporter.ts`: Generates self-contained HTML audit reports with dark theme styles and embedded interactive diagrams.
 - `src/store/traceStore.ts`: Zustand store managing active run state, playback position, filtering, and anomalies.
+- `server/otlpCollector.mjs`: Lightweight local HTTP server accepting OTLP trace payloads on port 4318 with Server-Sent Events broadcasting.
 
 ## License
 

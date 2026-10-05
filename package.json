@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "collector": "node server/otlpCollector.mjs"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",

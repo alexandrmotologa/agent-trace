@@ -12,6 +12,7 @@ import { useTraceStore } from '../../store/traceStore'
 import { SpanNode } from './SpanNode'
 import { LaneHeader } from './LaneHeader'
 import { TimeScrubber } from './TimeScrubber'
+import { SmartCanvasControls } from './SmartCanvasControls'
 import type { Span } from '../../types/trace'
 
 const nodeTypes = {
@@ -22,6 +23,7 @@ export const TimelineCanvas: React.FC = () => {
   const activeRun = useTraceStore((state) => state.activeRun)
   const selectedSpanId = useTraceStore((state) => state.selectedSpanId)
   const filterLane = useTraceStore((state) => state.filterLane)
+  const triageFilter = useTraceStore((state) => state.triageFilter)
   const searchQuery = useTraceStore((state) => state.searchQuery.toLowerCase().trim())
   const playbackStep = useTraceStore((state) => state.playbackStep)
 
@@ -40,6 +42,16 @@ export const TimelineCanvas: React.FC = () => {
       if (filterLane === 'llm' && s.type !== 'llm_call') return false
       if (filterLane === 'tool' && s.type !== 'tool_call') return false
 
+      // Triage filter
+      if (triageFilter === 'errors_only') {
+        const isErr = s.status === 'error' || s.toolCall?.isError
+        if (!isErr) return false
+      } else if (triageFilter === 'slow_only') {
+        if (s.durationMs < 1000) return false
+      } else if (triageFilter === 'high_tokens') {
+        if ((s.modelUsage?.totalTokens || 0) < 1000) return false
+      }
+
       // Search filter
       if (searchQuery) {
         const text = `${s.name} ${s.modelName || ''} ${s.toolCall?.toolName || ''} ${s.agentThought || ''} ${s.promptText || ''}`.toLowerCase()
@@ -48,6 +60,7 @@ export const TimelineCanvas: React.FC = () => {
 
       return true
     })
+
 
     const nodesList: Node[] = []
     const edgesList: Edge[] = []
@@ -180,6 +193,7 @@ export const TimelineCanvas: React.FC = () => {
             return '#10b981'
           }}
         />
+        <SmartCanvasControls />
       </ReactFlow>
 
       <TimeScrubber />

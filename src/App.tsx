@@ -8,16 +8,20 @@ import { TimelineCanvas } from './components/Timeline/TimelineCanvas'
 import { DetailDrawer } from './components/Inspector/DetailDrawer'
 import { TokenBurnChart } from './components/Analytics/TokenBurnChart'
 import { MemoryDiffView } from './components/Inspector/MemoryDiffView'
+import { TraceComparisonView } from './components/Analytics/TraceComparisonView'
 import { FileDropzone } from './components/Ingestion/FileDropzone'
 import { LiveSimulator } from './components/Ingestion/LiveSimulator'
+import { MermaidModal } from './components/Modals/MermaidModal'
+import { ForkStepModal } from './components/Modals/ForkStepModal'
 import { Sparkles, AlertCircle } from 'lucide-react'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
 export function App() {
+  useKeyboardShortcuts()
   const loadSample = useTraceStore((state) => state.loadSample)
   const isLoading = useTraceStore((state) => state.isLoading)
   const error = useTraceStore((state) => state.error)
   const activeTab = useUiStore((state) => state.activeTab)
-
 
   useEffect(() => {
     // Load initial sample
@@ -66,11 +70,19 @@ export function App() {
             <MemoryDiffView />
           </div>
         )}
+
+        {activeTab === 'compare' && (
+          <div className="w-full h-full overflow-y-auto">
+            <TraceComparisonView />
+          </div>
+        )}
       </main>
 
       {/* Overlays / Modals */}
       <FileDropzone />
       <LiveSimulator />
+      <MermaidModal />
+      <ForkStepModal />
     </div>
   )
 }

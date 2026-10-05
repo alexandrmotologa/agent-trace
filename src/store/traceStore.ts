@@ -5,8 +5,11 @@ import { detectAnomalies } from '../engine/loopDetector'
 import { computeRunCostBreakdown } from '../engine/costEngine'
 import { normalizeTraceData } from '../engine/normalizer'
 
+export type TriageFilter = 'all' | 'errors_only' | 'slow_only' | 'high_tokens'
+
 interface TraceStoreState {
   activeRun: AgentRun | null
+  compareRun: AgentRun | null
   selectedSpanId: string | null
   selectedStepIndex: number | null
   anomalies: AnomalyReport[]
@@ -16,17 +19,21 @@ interface TraceStoreState {
   isPlaying: boolean
   playbackSpeed: number
   filterLane: 'all' | 'agent' | 'llm' | 'tool'
+  triageFilter: TriageFilter
   searchQuery: string
   isLoading: boolean
   error: string | null
 
   // Actions
   loadRun: (run: AgentRun) => void
+  setCompareRun: (run: AgentRun | null) => void
+  loadCompareSample: (sampleFileName: string) => Promise<void>
   loadTraceContent: (content: string) => void
   loadSample: (sampleFileName: string) => Promise<void>
   selectSpan: (spanId: string | null) => void
   selectStep: (stepIndex: number | null) => void
   setFilterLane: (lane: 'all' | 'agent' | 'llm' | 'tool') => void
+  setTriageFilter: (filter: TriageFilter) => void
   setSearchQuery: (query: string) => void
   setPlaybackStep: (step: number) => void
   setIsPlaying: (playing: boolean) => void
@@ -36,10 +43,12 @@ interface TraceStoreState {
   getSelectedSpan: () => Span | undefined
 }
 
+
 import { useUiStore } from './uiStore'
 
 export const useTraceStore = create<TraceStoreState>((set, get) => ({
   activeRun: null,
+  compareRun: null,
   selectedSpanId: null,
   selectedStepIndex: null,
   anomalies: [],
@@ -49,9 +58,25 @@ export const useTraceStore = create<TraceStoreState>((set, get) => ({
   isPlaying: false,
   playbackSpeed: 1,
   filterLane: 'all',
+  triageFilter: 'all',
   searchQuery: '',
   isLoading: false,
   error: null,
+
+  setCompareRun: (run) => set({ compareRun: run }),
+
+  loadCompareSample: async (sampleFileName: string) => {
+    try {
+      const response = await fetch(`/samples/${sampleFileName}`)
+      if (!response.ok) throw new Error('Failed to load compare sample')
+      const data = await response.json()
+      const normalized = normalizeTraceData(data)
+      set({ compareRun: normalized })
+    } catch (err: unknown) {
+      console.error(err)
+    }
+  },
+
 
   loadRun: (run: AgentRun) => {
     const anomalies = detectAnomalies(run)
@@ -159,6 +184,7 @@ export const useTraceStore = create<TraceStoreState>((set, get) => ({
   },
 
   setFilterLane: (lane) => set({ filterLane: lane }),
+  setTriageFilter: (filter) => set({ triageFilter: filter }),
   setSearchQuery: (query) => set({ searchQuery: query }),
   setPlaybackStep: (step) => set({ playbackStep: step }),
   setIsPlaying: (playing) => set({ isPlaying: playing }),

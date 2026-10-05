@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Handle, Position } from '@xyflow/react'
 import type { Span } from '../../types/trace'
-import { formatDuration, formatTokens } from '../../utils/formatters'
-import { Brain, Cpu, Wrench, AlertTriangle, CheckCircle2, Clock } from 'lucide-react'
+import { formatDuration, formatTokens, formatCost } from '../../utils/formatters'
+import { Brain, Cpu, Wrench, AlertTriangle, CheckCircle2, Clock, Copy, Check } from 'lucide-react'
 import { useTraceStore } from '../../store/traceStore'
 
 interface SpanNodeData {
@@ -13,8 +13,17 @@ interface SpanNodeData {
 export const SpanNode: React.FC<{ data: SpanNodeData }> = ({ data }) => {
   const { span, isSelected } = data
   const selectSpan = useTraceStore((state) => state.selectSpan)
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [copiedId, setCopiedId] = useState(false)
 
   const isError = span.status === 'error' || span.toolCall?.isError
+
+  const handleCopyId = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    navigator.clipboard.writeText(span.id)
+    setCopiedId(true)
+    setTimeout(() => setCopiedId(false), 1500)
+  }
 
   const getLaneStyle = () => {
     switch (span.type) {
@@ -56,11 +65,13 @@ export const SpanNode: React.FC<{ data: SpanNodeData }> = ({ data }) => {
 
   return (
     <div
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
       onClick={(e) => {
         e.stopPropagation()
         selectSpan(span.id)
       }}
-      className={`group relative rounded-lg border px-3 py-2.5 transition-all duration-150 cursor-pointer min-w-[190px] max-w-[280px] backdrop-blur-md ${style.bg} ${style.border}`}
+      className={`group relative rounded-lg border px-3 py-2.5 transition-all duration-150 cursor-pointer min-w-[200px] max-w-[280px] backdrop-blur-md ${style.bg} ${style.border}`}
     >
       <Handle
         type="target"
@@ -95,7 +106,7 @@ export const SpanNode: React.FC<{ data: SpanNodeData }> = ({ data }) => {
 
       {/* Bottom status & metric bar */}
       <div className="flex items-center justify-between pt-1 border-t border-slate-800/60 text-[10px] text-slate-400">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 font-mono">
           <Clock className="w-2.5 h-2.5 text-slate-500" />
           <span>{formatDuration(span.durationMs)}</span>
         </div>
@@ -122,6 +133,51 @@ export const SpanNode: React.FC<{ data: SpanNodeData }> = ({ data }) => {
           </span>
         )}
       </div>
+
+      {/* Rich Hover Tooltip */}
+      {showTooltip && (
+        <div className="absolute left-1/2 -translate-x-1/2 -top-24 z-50 w-64 p-2.5 bg-slate-900/95 backdrop-blur-md border border-slate-750 rounded-lg shadow-2xl text-[11px] text-slate-300 pointer-events-auto select-text animate-in fade-in zoom-in-95 duration-100">
+          <div className="flex items-center justify-between pb-1.5 border-b border-slate-800 font-semibold text-white">
+            <span className="truncate">{span.name}</span>
+            <button
+              onClick={handleCopyId}
+              title="Copy Span ID"
+              className="flex items-center gap-1 text-[10px] text-slate-400 hover:text-white px-1 py-0.5 rounded hover:bg-slate-800 transition"
+            >
+              {copiedId ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              <span className="font-mono">{span.id.slice(0, 8)}</span>
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-1 pt-1.5 text-[10px] font-mono">
+            <div>
+              <span className="text-slate-500">Duration: </span>
+              <span className="text-slate-200">{formatDuration(span.durationMs)}</span>
+            </div>
+            <div>
+              <span className="text-slate-500">Step: </span>
+              <span className="text-slate-200">#{span.stepIndex}</span>
+            </div>
+            {span.modelUsage && (
+              <>
+                <div>
+                  <span className="text-slate-500">Prompt: </span>
+                  <span className="text-sky-300">{formatTokens(span.modelUsage.promptTokens)}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500">Cost: </span>
+                  <span className="text-emerald-400">{formatCost(span.modelUsage.costEstimateUsd || 0)}</span>
+                </div>
+              </>
+            )}
+            {span.toolCall && (
+              <div className="col-span-2 truncate">
+                <span className="text-slate-500">Tool: </span>
+                <span className="text-emerald-300">{span.toolCall.toolName}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <Handle
         type="source"

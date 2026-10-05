@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { DiffEditor } from '@monaco-editor/react'
 import { useTraceStore } from '../../store/traceStore'
 import { computeContextDiff } from '../../engine/diffEngine'
 import { formatTokens } from '../../utils/formatters'
 import { AlertTriangle, ArrowRight, Layers, Sparkles } from 'lucide-react'
+import { ContextCompositionBar } from './ContextCompositionBar'
 
 export const MemoryDiffView: React.FC = () => {
   const activeRun = useTraceStore((state) => state.activeRun)
@@ -107,6 +108,12 @@ export const MemoryDiffView: React.FC = () => {
           </span>
         </div>
       )}
+
+      {/* Context Composition Breakdown */}
+      <div className="p-3 border-b border-slate-800 bg-slate-950/40">
+        <ContextCompositionBar messages={currStep.contextMessages} />
+      </div>
+
 
       {/* Side-by-side Monaco diff container */}
       <div className="flex-1 min-h-[350px] relative">
